@@ -60,7 +60,7 @@ const FireblocksLogo: FC = () => (
 );
 
 const SummaryPanel: FC<{ flow: Flow | null }> = ({ flow }) => (
-  <div className="lg:w-[280px] shrink-0 bg-[oklch(0.18_0.025_260)] text-white flex flex-col p-8">
+  <div className="lg:w-[280px] shrink-0 bg-[oklch(0.18_0.025_260)] text-white flex flex-col p-8 overflow-y-auto">
     <FireblocksLogo />
 
     <div className="flex-1 mt-10">
@@ -122,7 +122,7 @@ const SummaryPanel: FC<{ flow: Flow | null }> = ({ flow }) => (
 );
 
 const CheckoutShell: FC<{ left: React.ReactNode; right: React.ReactNode }> = ({ left, right }) => (
-  <div className="w-full max-w-[800px] mx-auto rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:flex-row min-h-[480px]">
+  <div className="w-full max-w-[800px] mx-auto rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:flex-row h-[600px]">
     {left}
     {right}
   </div>
@@ -335,7 +335,7 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
           </div>
 
           {/* View content */}
-          <div className="flex-1 p-8 relative overflow-hidden">
+          <div className="flex-1 p-8 relative overflow-y-auto">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={view}

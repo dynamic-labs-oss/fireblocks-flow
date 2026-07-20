@@ -31,8 +31,9 @@ const PaymentLinkPage: FC = () => {
 
   // Full page reload so the module-level SDK init flag in dynamicClient.ts
   // resets — an SPA navigation would keep the payment link's environmentId.
+  // Reload the same URL (not '/') so the ?flow= param is preserved.
   // eslint-disable-next-line no-restricted-globals
-  const handleReset = useCallback(() => { window.location.href = '/'; }, []);
+  const handleReset = useCallback(() => { window.location.reload(); }, []);
 
   if (!decoded) {
     return (

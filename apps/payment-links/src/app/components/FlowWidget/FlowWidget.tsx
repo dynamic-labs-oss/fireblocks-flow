@@ -7,6 +7,7 @@ import {
   useAttachFlowSource,
   useUser,
 } from '@dynamic-labs-sdk/react-hooks';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Lock, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { FC } from 'react';
@@ -306,17 +307,26 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
         <div className="flex-1 bg-white flex flex-col">
           {/* Step header */}
           <div className="px-8 pt-7 pb-5 border-b border-gray-100">
-            <div className="flex items-start justify-between gap-4">
-              <h2 className="text-base font-semibold text-gray-900">
-                {STEP_TITLES[view]}
-              </h2>
-              {stateConfig && (
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0 mt-0.5">
-                  <span className={`size-1.5 rounded-full shrink-0 ${stateConfig.dot}`} />
-                  {stateConfig.label}
-                </span>
-              )}
-            </div>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={view}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="flex items-start justify-between gap-4"
+              >
+                <h2 className="text-base font-semibold text-gray-900">
+                  {STEP_TITLES[view]}
+                </h2>
+                {stateConfig && (
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0 mt-0.5">
+                    <span className={`size-1.5 rounded-full shrink-0 ${stateConfig.dot}`} />
+                    {stateConfig.label}
+                  </span>
+                )}
+              </motion.div>
+            </AnimatePresence>
             {flow && (
               <p className="text-[11px] font-mono text-gray-400 mt-1">
                 {flow.id.slice(0, 8)}…
@@ -325,7 +335,15 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
           </div>
 
           {/* View content */}
-          <div className="flex-1 p-8 relative">
+          <div className="flex-1 p-8 relative overflow-hidden">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={view}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.18, ease: 'easeInOut' }}
+              >
             {view === 'selectSource' && flow && (
               <SelectSourceView
                 onSelectWallet={() => setView('attachWallet')}
@@ -431,6 +449,9 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
             {view === 'status' && flow && (
               <StatusView flow={flow} onFlowUpdated={setFlow} onReset={handleReset} />
             )}
+
+              </motion.div>
+            </AnimatePresence>
 
             {isAttachingExchange && (
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">

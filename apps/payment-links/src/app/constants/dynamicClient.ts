@@ -23,8 +23,14 @@ export const initializeDynamicClient = ({
 
   initialized = true;
 
+  const apiBaseUrl =
+    typeof window !== 'undefined'
+      ? (localStorage.getItem('payment-links-api-url') ?? undefined)
+      : undefined;
+
   createDynamicClient({
     autoInitialize: false,
+    ...(apiBaseUrl ? { coreConfig: { apiBaseUrl } } : {}),
     environmentId,
     logLevel: 'debug',
   });

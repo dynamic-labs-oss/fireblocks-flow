@@ -10,6 +10,7 @@ import { DeviceRegistrationHandler } from './components/DeviceRegistrationHandle
 import { DynamicClientProvider } from './components/DynamicClientProvider/DynamicClientProvider';
 import { FlowWidget } from './components/FlowWidget/FlowWidget';
 import { InvalidPaymentLink } from './components/InvalidPaymentLink/InvalidPaymentLink';
+import { PaymentLinksInfo } from './components/PaymentLinksInfo/PaymentLinksInfo';
 import {
   FLOW_QUERY_PARAM,
   decodePaymentLink,
@@ -34,6 +35,14 @@ const PaymentLinkPage: FC = () => {
   // Reload the same URL (not '/') so the ?flow= param is preserved.
   // eslint-disable-next-line no-restricted-globals
   const handleReset = useCallback(() => { window.location.reload(); }, []);
+
+  if (!encoded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-[#f0f2f5]">
+        <PaymentLinksInfo />
+      </div>
+    );
+  }
 
   if (!decoded) {
     return (

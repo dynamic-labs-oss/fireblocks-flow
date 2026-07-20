@@ -1,6 +1,7 @@
 'use client';
 
 import type { OTPVerification } from '@dynamic-labs-sdk/client';
+import { getCaptchaSettings } from '@dynamic-labs-sdk/client';
 import {
   createWaasWalletAccounts,
   getChainsMissingWaasWalletAccounts,
@@ -14,6 +15,8 @@ import { ArrowRight, ChevronLeft } from 'lucide-react';
 import type { FC, FormEvent } from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+
+import { CaptchaWidget } from './CaptchaWidget';
 
 type EmailLoginViewProps = {
   onBack: () => void;
@@ -29,6 +32,8 @@ export const EmailLoginView: FC<EmailLoginViewProps> = ({
   const [isCreatingWallets, setIsCreatingWallets] = useState(false);
   const [otpVerification, setOtpVerification] =
     useState<OTPVerification | null>(null);
+  const [captchaSolved, setCaptchaSolved] = useState(false);
+  const captchaRequired = !!getCaptchaSettings();
 
   const createWalletsAndProceed = async () => {
     setIsCreatingWallets(true);
@@ -194,11 +199,14 @@ export const EmailLoginView: FC<EmailLoginViewProps> = ({
             autoFocus
           />
         </div>
+        {captchaRequired && (
+          <CaptchaWidget onSolved={() => setCaptchaSolved(true)} />
+        )}
         <Button
           type="submit"
           className="w-full"
           size="lg"
-          disabled={!email.trim() || isSending}
+          disabled={!email.trim() || isSending || (captchaRequired && !captchaSolved)}
         >
           {isSending ? (
             <Spinner className="size-4" />

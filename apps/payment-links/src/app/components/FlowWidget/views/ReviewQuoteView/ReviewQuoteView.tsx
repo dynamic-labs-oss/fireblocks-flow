@@ -3,7 +3,7 @@
 import type { Flow, WalletAccount } from '@dynamic-labs-sdk/client';
 import { getFlowQuote } from '@dynamic-labs-sdk/client';
 import { isWaasWalletAccount } from '@dynamic-labs-sdk/client/waas';
-import { Button, Spinner } from '@dynamic-labs-sdk/droplet';
+import { Button, Checkbox, Spinner } from '@dynamic-labs-sdk/droplet';
 import { ChevronLeft, Clock, RefreshCw } from 'lucide-react';
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';

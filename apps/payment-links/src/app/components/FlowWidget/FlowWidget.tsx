@@ -2,7 +2,7 @@
 
 import type { Flow, WalletAccount } from '@dynamic-labs-sdk/client';
 import { getFlow, logout } from '@dynamic-labs-sdk/client';
-import { Button, Spinner } from '@dynamic-labs-sdk/droplet';
+import { Button, Card, CardAction, CardContent, CardHeader, CardTitle, Skeleton, Spinner } from '@dynamic-labs-sdk/droplet';
 import {
   useAttachFlowSource,
   useCancelFlow,
@@ -239,12 +239,16 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
   if (isRestoring) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="rounded-2xl bg-card overflow-hidden border border-[oklch(0.278_0.03_256.85_/_0.10)]" style={{ boxShadow: '0 0 0 1px oklch(0.278 0.03 256.85 / 0.06), 0 8px 40px oklch(0.278 0.03 256.85 / 0.18), 0 2px 8px oklch(0.278 0.03 256.85 / 0.10)' }}>
-          <div className="p-8 flex flex-col items-center gap-3">
-            <Spinner className="size-6 text-[var(--action)]" />
-            <p className="text-sm text-muted-foreground">Loading flow…</p>
-          </div>
-        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-3">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-14 w-full" />
+              <Skeleton className="h-14 w-full" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -252,8 +256,8 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
   if (restoreError) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="rounded-2xl bg-card overflow-hidden border border-[oklch(0.278_0.03_256.85_/_0.10)]" style={{ boxShadow: '0 0 0 1px oklch(0.278 0.03 256.85 / 0.06), 0 8px 40px oklch(0.278 0.03 256.85 / 0.18), 0 2px 8px oklch(0.278 0.03 256.85 / 0.10)' }}>
-          <div className="p-8 flex flex-col items-center gap-3 text-center">
+        <Card>
+          <CardContent className="p-8 flex flex-col items-center gap-3 text-center">
             <div className="mx-auto w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
               <X className="w-6 h-6 text-red-500" />
             </div>
@@ -266,34 +270,33 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
                 link may be incorrect.
               </p>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="rounded-2xl bg-card overflow-hidden border border-[oklch(0.278_0.03_256.85_/_0.10)]" style={{ boxShadow: '0 0 0 1px oklch(0.278 0.03 256.85 / 0.06), 0 8px 40px oklch(0.278 0.03 256.85 / 0.18), 0 2px 8px oklch(0.278 0.03 256.85 / 0.10)' }}>
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <span className="text-sm font-semibold tracking-tight">
-            Fireblocks Flow
-          </span>
-          <div className="flex items-center gap-2">
-            {stateConfig && (
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <span className={`size-1.5 rounded-full shrink-0 ${stateConfig.dot}`} />
-                {stateConfig.label}
-              </span>
-            )}
-            {flow && (
-              <span className="font-mono text-xs text-muted-foreground">
-                {flow.id.slice(0, 8)}…
-              </span>
-            )}
-          </div>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Fireblocks Flow</CardTitle>
+          <CardAction>
+            <div className="flex items-center gap-2">
+              {stateConfig && (
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className={`size-1.5 rounded-full shrink-0 ${stateConfig.dot}`} />
+                  {stateConfig.label}
+                </span>
+              )}
+              {flow && (
+                <span className="font-mono text-xs text-muted-foreground">
+                  {flow.id.slice(0, 8)}…
+                </span>
+              )}
+            </div>
+          </CardAction>
+        </CardHeader>
 
         {/* Amount band */}
         {flow && (
@@ -335,8 +338,7 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
           </div>
         )}
 
-        {/* View content */}
-        <div className="p-6 relative">
+        <CardContent className="p-6 relative">
           {view === 'enterFlowId' && (
             <EnterFlowIdView onFlowLoaded={handleFlowLoaded} />
           )}
@@ -475,8 +477,8 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
               {isCancelling ? 'Cancelling…' : 'Cancel flow'}
             </Button>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

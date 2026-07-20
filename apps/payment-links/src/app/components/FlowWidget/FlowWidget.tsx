@@ -19,7 +19,6 @@ import type { FlowWidgetView } from './FlowWidget.types';
 import { AttachWalletView } from './views/AttachWalletView/AttachWalletView';
 import { DepositAddressView } from './views/DepositAddressView/DepositAddressView';
 import { EmailLoginView } from './views/EmailLoginView/EmailLoginView';
-import { EnterFlowIdView } from './views/EnterFlowIdView/EnterFlowIdView';
 import { ExchangeView } from './views/ExchangeView/ExchangeView';
 import { ReviewQuoteView } from './views/ReviewQuoteView/ReviewQuoteView';
 import { SelectSourceView } from './views/SelectSourceView/SelectSourceView';
@@ -32,7 +31,6 @@ type FlowWidgetProps = {
 };
 
 const STEP_TITLES: Record<FlowWidgetView, string> = {
-  enterFlowId: 'Enter flow ID',
   selectSource: 'Choose payment method',
   emailLogin: 'Sign in with email',
   attachWallet: 'Connect your wallet',
@@ -144,7 +142,7 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
 
   const [flowId, setFlowId] = useState<string | null>(null);
   const [flow, setFlow] = useState<Flow | null>(null);
-  const [view, setView] = useState<FlowWidgetView>('enterFlowId');
+  const [view, setView] = useState<FlowWidgetView>('selectSource');
   const [isRestoring, setIsRestoring] = useState(!!effectiveFlowId);
   const [selectedWallet, setSelectedWallet] = useState<WalletAccount | null>(null);
   const [selectedFromTokenAddress, setSelectedFromTokenAddress] = useState<string | undefined>();
@@ -249,20 +247,6 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
       },
     });
 
-  const handleFlowLoaded = (loadedFlow: Flow) => {
-    const state = String(loadedFlow.executionState);
-    sessionStorage.setItem(FLOW_ID_STORAGE_KEY, loadedFlow.id);
-    if (TERMINAL_STATES.has(state)) {
-      setFlowId(loadedFlow.id);
-      setFlow(loadedFlow);
-      setView('status');
-      return;
-    }
-    setFlowId(loadedFlow.id);
-    setFlow(loadedFlow);
-    setView('selectSource');
-  };
-
   const handleSelectExchange = () => {
     if (!flowId) return;
     attachExchangeSource({ exchangeProvider: 'coinbase', flowId, sourceType: 'exchange' });
@@ -358,10 +342,6 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
 
           {/* View content */}
           <div className="flex-1 p-8 relative">
-            {view === 'enterFlowId' && (
-              <EnterFlowIdView onFlowLoaded={handleFlowLoaded} />
-            )}
-
             {view === 'selectSource' && flow && (
               <SelectSourceView
                 onSelectWallet={() => setView('attachWallet')}

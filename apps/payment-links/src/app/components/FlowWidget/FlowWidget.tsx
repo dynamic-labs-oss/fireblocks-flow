@@ -206,16 +206,17 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
   const handleReset = useCallback(() => {
     void logout();
     sessionStorage.removeItem(FLOW_ID_STORAGE_KEY);
+    if (onReset) {
+      // Page is about to reload — skip state updates to avoid a flash of enterFlowId.
+      onReset();
+      return;
+    }
     setFlow(null);
     setFlowId(null);
     setSelectedWallet(null);
     setUsedEmailLogin(false);
     setView('enterFlowId');
-    if (onReset) {
-      onReset();
-    } else {
-      router.replace('/');
-    }
+    router.replace('/');
   }, [router, onReset]);
 
   const { mutate: cancelFlow, isPending: isCancelling } = useCancelFlow({

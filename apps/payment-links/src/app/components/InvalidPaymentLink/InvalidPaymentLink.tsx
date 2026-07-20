@@ -1,35 +1,40 @@
 'use client';
 
-import { LinkIcon } from 'lucide-react';
+import { Link2Off } from 'lucide-react';
 import type { FC } from 'react';
 
-/**
- * Shown when the `?flow=` param is missing or can't be decoded into a
- * `{ environmentId, flowId }` descriptor — i.e. a broken or tampered link.
- */
 export const InvalidPaymentLink: FC = () => {
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div
-        className="rounded-2xl bg-card overflow-hidden border border-[oklch(0.278_0.03_256.85_/_0.10)]"
-        style={{
-          boxShadow:
-            '0 0 0 1px oklch(0.278 0.03 256.85 / 0.06), 0 8px 40px oklch(0.278 0.03 256.85 / 0.18), 0 2px 8px oklch(0.278 0.03 256.85 / 0.10)',
-        }}
-      >
-        <div className="p-8 flex flex-col items-center gap-3 text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-[var(--brand-light)] flex items-center justify-center">
-            <LinkIcon className="w-6 h-6 text-[var(--action)]" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold tracking-tight">
-              Invalid payment link
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              This payment link is missing or malformed. Please check the link
-              and try again.
-            </p>
-          </div>
+    <div className="w-full max-w-sm mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+      {/* Dark top stripe matching the checkout summary panel */}
+      <div className="bg-[oklch(0.18_0.025_260)] px-8 py-6 flex items-center gap-2.5">
+        <svg width="20" height="17" viewBox="0 0 28 24" fill="none" aria-hidden>
+          <path
+            d="M12.0639 1.80289C11.5488 2.28286 11.0427 2.75394 10.5366 3.2228C8.18574 5.40488 5.8349 7.58919 3.48184 9.76683C2.94241 10.2668 2.383 10.7468 1.70594 11.0401C0.900128 11.3889 0.438394 11.1712 0.178669 10.3023C-0.18317 9.08687 0.00995842 7.95361 0.709218 6.90923C1.30414 6.0204 2.05446 5.28045 2.82476 4.56049C4.05234 3.4139 5.28881 2.27841 6.54082 1.16293C7.08913 0.674073 7.68849 0.227435 8.42105 0.0785558C10.6143 -0.363638 12.0128 1.73845 12.0661 1.80067L12.0639 1.80289Z"
+            fill="oklch(0.60 0.18 258)"
+          />
+          <path
+            d="M1.5105 12.9044C2.84464 12.52 3.8458 11.6734 4.82033 10.7823C7.92814 7.94695 11.0315 5.10935 14.1527 2.28953C14.8408 1.66735 15.5645 1.07183 16.3304 0.551865C17.3049 -0.110315 18.3638 -0.205864 19.4071 0.425206C19.7845 0.651859 20.1552 0.916287 20.4615 1.23182C21.5249 2.33175 22.5749 3.44946 23.5982 4.58716C24.6859 5.79597 25.7559 7.02256 26.797 8.27137C27.1544 8.70023 27.4475 9.2002 27.6894 9.70683C28.1401 10.649 28.0246 11.58 27.4763 12.4578C26.9857 13.2444 26.3287 13.8888 25.6516 14.4999C23.0011 16.8953 20.3505 19.2907 17.6689 21.6527C16.9497 22.2882 16.1572 22.8571 15.3403 23.3593C13.8019 24.3081 12.2591 24.1904 10.8562 23.066C10.0392 22.4127 9.27117 21.6816 8.56969 20.9039C6.30986 18.3996 4.09221 15.8598 1.85902 13.331C1.7458 13.2044 1.64369 13.0666 1.5105 12.9022V12.9044Z"
+            fill="oklch(0.60 0.18 258)"
+          />
+        </svg>
+        <span className="text-sm font-semibold text-white/80">Fireblocks</span>
+      </div>
+
+      {/* Error body */}
+      <div className="px-8 py-10 flex flex-col items-center gap-4 text-center">
+        <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+          <Link2Off className="w-5 h-5 text-red-500" />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Invalid payment link
+          </h2>
+          <p className="text-sm text-gray-500 mt-1.5 leading-relaxed">
+            This payment link is missing or malformed.
+            <br />
+            Please check the link and try again.
+          </p>
         </div>
       </div>
     </div>

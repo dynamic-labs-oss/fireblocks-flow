@@ -10,7 +10,6 @@ import { DeviceRegistrationHandler } from './components/DeviceRegistrationHandle
 import { DynamicClientProvider } from './components/DynamicClientProvider/DynamicClientProvider';
 import { FlowWidget } from './components/FlowWidget/FlowWidget';
 import { InvalidPaymentLink } from './components/InvalidPaymentLink/InvalidPaymentLink';
-import { PageShell } from './components/PageShell/PageShell';
 import {
   FLOW_QUERY_PARAM,
   decodePaymentLink,
@@ -37,9 +36,9 @@ const PaymentLinkPage: FC = () => {
 
   if (!decoded) {
     return (
-      <PageShell>
+      <div className="min-h-screen flex items-center justify-center p-6 bg-[#f0f2f5]">
         <InvalidPaymentLink />
-      </PageShell>
+      </div>
     );
   }
 

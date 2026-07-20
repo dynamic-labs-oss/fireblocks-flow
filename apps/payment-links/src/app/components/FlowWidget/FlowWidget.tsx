@@ -2,10 +2,9 @@
 
 import type { Flow, WalletAccount } from '@dynamic-labs-sdk/client';
 import { getFlow, logout } from '@dynamic-labs-sdk/client';
-import { Button, Spinner } from '@dynamic-labs-sdk/droplet';
+import { Spinner } from '@dynamic-labs-sdk/droplet';
 import {
   useAttachFlowSource,
-  useCancelFlow,
   useUser,
 } from '@dynamic-labs-sdk/react-hooks';
 import { Lock, X } from 'lucide-react';
@@ -14,7 +13,7 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { FLOW_ID_STORAGE_KEY, STATE_CONFIG, TERMINAL_STATES, VIEWS_WITH_CANCEL } from './FlowWidget.constants';
+import { FLOW_ID_STORAGE_KEY, STATE_CONFIG, TERMINAL_STATES } from './FlowWidget.constants';
 import type { FlowWidgetView } from './FlowWidget.types';
 import { AttachWalletView } from './views/AttachWalletView/AttachWalletView';
 import { DepositAddressView } from './views/DepositAddressView/DepositAddressView';
@@ -216,21 +215,6 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
     setView('enterFlowId');
     router.replace('/');
   }, [router, onReset]);
-
-  const { mutate: cancelFlow, isPending: isCancelling } = useCancelFlow({
-    mutateParams: {
-      onError: () => { toast.error('Could not cancel flow.'); },
-      onSettled: handleReset,
-    },
-  });
-
-  const handleCancel = useCallback(() => {
-    if (flowId) {
-      cancelFlow({ flowId });
-    } else {
-      handleReset();
-    }
-  }, [flowId, cancelFlow, handleReset]);
 
   const { mutate: attachExchangeSource, isPending: isAttachingExchange } =
     useAttachFlowSource({
@@ -457,17 +441,6 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
               </div>
             )}
 
-            {VIEWS_WITH_CANCEL.includes(view) && flow && (
-              <Button
-                variant="ghost"
-                className="w-full mt-4 text-[var(--text-danger)] hover:text-[var(--text-danger)]"
-                onClick={handleCancel}
-                disabled={isCancelling}
-              >
-                {isCancelling ? <Spinner className="size-4" /> : <X className="w-4 h-4" />}
-                {isCancelling ? 'Cancelling…' : 'Cancel flow'}
-              </Button>
-            )}
           </div>
         </div>
       }

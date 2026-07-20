@@ -221,8 +221,13 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
     useAttachFlowSource({
       mutateParams: {
         onError: (error) => {
+          const raw = error instanceof Error ? error.message : '';
+          const isChainMismatch = raw.toLowerCase().includes('settlement chain') ||
+            raw.toLowerCase().includes('destination address');
           toast.error(
-            error instanceof Error ? error.message : 'Failed to attach exchange source.'
+            isChainMismatch
+              ? 'Exchange payment isn\'t available for this flow. Please choose another payment method.'
+              : (raw || 'Failed to attach exchange source.')
           );
         },
         onSuccess: (response) => {

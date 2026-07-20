@@ -1,0 +1,1 @@
+export { WalletConnectDialog } from './WalletConnectDialog';

@@ -23,11 +23,11 @@ export const ProviderButton: FC<ProviderButtonProps> = ({
     className="w-full flex items-center gap-3 px-3 py-3 rounded-xl border border-border bg-card hover:border-[var(--action)] hover:bg-[var(--action)]/5 transition-all duration-150 cursor-pointer"
   >
     {walletConnectIcon ? (
-      <div className="w-7 h-7 rounded-md bg-[#3b99fc] flex items-center justify-center shrink-0">
+      <div className="w-10 h-10 rounded-xl bg-[#3b99fc] flex items-center justify-center shrink-0">
         <svg
           viewBox="0 0 32 32"
-          width="16"
-          height="16"
+          width="18"
+          height="18"
           fill="white"
           aria-hidden
         >
@@ -35,16 +35,16 @@ export const ProviderButton: FC<ProviderButtonProps> = ({
         </svg>
       </div>
     ) : ChainIconComponent ? (
-      <ChainIconComponent className="w-7 h-7 rounded-md shrink-0" />
+      <ChainIconComponent className="w-10 h-10 rounded-xl shrink-0" />
     ) : iconSrc ? (
       <img
         src={iconSrc}
         alt={`${displayName} icon`}
-        className="w-7 h-7 rounded-md shrink-0"
+        className="w-10 h-10 rounded-xl shrink-0"
       />
     ) : (
-      <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center shrink-0">
-        <Wallet className="w-4 h-4 text-muted-foreground" />
+      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+        <Wallet className="w-5 h-5 text-muted-foreground" />
       </div>
     )}
     <span className="text-sm font-medium">{displayName}</span>

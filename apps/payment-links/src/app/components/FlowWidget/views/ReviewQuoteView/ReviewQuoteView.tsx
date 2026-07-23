@@ -4,7 +4,7 @@ import type { Flow, WalletAccount } from '@dynamic-labs-sdk/client';
 import { getFlowQuote } from '@dynamic-labs-sdk/client';
 import { isWaasWalletAccount } from '@dynamic-labs-sdk/client/waas';
 import { Button, Checkbox, Spinner } from '@dynamic-labs-sdk/droplet';
-import { ChevronLeft, Clock, RefreshCw } from 'lucide-react';
+import { ArrowRight, Clock, RefreshCw, X } from 'lucide-react';
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -75,21 +75,22 @@ export const ReviewQuoteView: FC<ReviewQuoteViewProps> = ({
   const quote = displayFlow.quote;
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center gap-2">
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-0.5">
+            Payment
+          </p>
+          <h2 className="text-xl font-bold">Review your payment</h2>
+        </div>
         <button
           onClick={onBack}
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground transition-colors mt-1"
           aria-label="Go back"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <X className="w-5 h-5" />
         </button>
-        <div>
-          <h3 className="text-base font-semibold">Review quote</h3>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Confirm the details before signing
-          </p>
-        </div>
       </div>
 
       {isPending ? (
@@ -98,45 +99,85 @@ export const ReviewQuoteView: FC<ReviewQuoteViewProps> = ({
           <p className="text-sm text-muted-foreground">Fetching quote…</p>
         </div>
       ) : quote ? (
-        <div className="space-y-3">
-          <div className="rounded-xl border border-border bg-[var(--bg-bottom)] divide-y divide-border">
-            <div className="flex items-center justify-between px-4 py-3">
-              <span className="text-sm text-muted-foreground">You send</span>
-              <span className="text-sm font-semibold font-mono">
+        <div className="space-y-4">
+          {/* Subtitle */}
+          {fromTokenSymbol && (
+            <p className="text-sm text-muted-foreground">
+              You're paying {displayFlow.amount} {displayFlow.currency} with {fromTokenSymbol}.
+            </p>
+          )}
+
+          {/* From → To visualization */}
+          <div className="rounded-xl bg-[var(--brand-light)] p-4 flex items-center gap-3">
+            <div className="flex-1 text-center space-y-1.5">
+              <div className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center mx-auto">
+                <span className="text-[10px] font-bold text-[var(--action)]">
+                  {fromTokenSymbol?.slice(0, 4) ?? '?'}
+                </span>
+              </div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                {fromTokenSymbol}
+              </p>
+              <p className="text-xs font-bold font-mono">
                 {formatQuoteAmount({ decimals: fromTokenDecimals, raw: quote.fromAmount })}
-                {fromTokenSymbol && ` ${fromTokenSymbol}`}
-              </span>
+              </p>
             </div>
-            <div className="flex items-center justify-between px-4 py-3">
-              <span className="text-sm text-muted-foreground">They receive</span>
-              <span className="text-sm font-semibold font-mono text-[var(--action)]">
-                {formatQuoteAmount({ raw: displayFlow.amount })}{' '}
+            <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
+            <div className="flex-1 text-center space-y-1.5">
+              <div className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center mx-auto">
+                <span className="text-[10px] font-bold text-[var(--action)]">
+                  {displayFlow.currency.slice(0, 4)}
+                </span>
+              </div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 {displayFlow.currency}
-              </span>
+              </p>
+              <p className="text-xs font-bold font-mono">
+                {formatQuoteAmount({ raw: displayFlow.amount })}
+              </p>
+            </div>
+          </div>
+
+          {/* Fee breakdown */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Item total</span>
+              <span>{displayFlow.amount} {displayFlow.currency}</span>
             </div>
             {quote.fees?.totalFeeUsd && (
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-sm text-muted-foreground">Est. fees</span>
-                <span className="text-sm font-mono">
-                  ${quote.fees.totalFeeUsd}
-                </span>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Fee</span>
+                <span>${quote.fees.totalFeeUsd}</span>
               </div>
             )}
             {quote.estimatedTimeSec && (
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
                   Est. time
                 </span>
-                <span className="text-sm">
-                  {formatSeconds(quote.estimatedTimeSec)}
-                </span>
+                <span>{formatSeconds(quote.estimatedTimeSec)}</span>
               </div>
             )}
+            <div className="border-t border-dashed border-border pt-2 flex justify-between text-sm font-semibold">
+              <span>Total</span>
+              <span className="font-mono">
+                {formatQuoteAmount({ decimals: fromTokenDecimals, raw: quote.fromAmount })}{' '}
+                {fromTokenSymbol}
+              </span>
+            </div>
           </div>
 
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-xs text-center text-muted-foreground">
             Quote expires at {new Date(quote.expiresAt).toLocaleTimeString()}
+            {' · '}
+            <button
+              onClick={() => void doFetchQuote()}
+              disabled={isPending}
+              className="underline hover:text-foreground transition-colors"
+            >
+              Refresh
+            </button>
           </p>
 
           {isEmbedded && (
@@ -153,24 +194,23 @@ export const ReviewQuoteView: FC<ReviewQuoteViewProps> = ({
             </label>
           )}
 
-          <div className="flex flex-col gap-2">
+          <div className="flex gap-3">
             <Button
-              className="w-full"
+              variant="outline"
+              className="flex-1"
+              size="lg"
+              onClick={onBack}
+              disabled={isPending}
+            >
+              Back
+            </Button>
+            <Button
+              className="flex-1"
               size="lg"
               onClick={() => onConfirm(displayFlow, disableSponsorship ? 'off' : 'auto')}
               disabled={isPending}
             >
-              Confirm & Sign
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              size="lg"
-              onClick={() => void doFetchQuote()}
-              disabled={isPending}
-            >
-              <RefreshCw className="w-4 h-4" />
-              Refresh quote
+              Confirm Payment
             </Button>
           </div>
         </div>

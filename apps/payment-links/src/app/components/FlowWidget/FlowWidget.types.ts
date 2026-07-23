@@ -1,4 +1,5 @@
 export type FlowWidgetView =
+  | 'landing'
   | 'selectSource'
   | 'emailLogin'
   | 'attachWallet'

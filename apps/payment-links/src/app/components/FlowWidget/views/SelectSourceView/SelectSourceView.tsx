@@ -4,6 +4,8 @@ import { ArrowDownToLine, ArrowLeftRight, KeyRound, Wallet } from 'lucide-react'
 import type { FC } from 'react';
 
 type SelectSourceViewProps = {
+  amount?: string;
+  currency?: string;
   onSelectDepositAddress: () => void;
   onSelectEmbeddedWallet: () => void;
   onSelectExchange: () => void;
@@ -19,6 +21,8 @@ type SourceOption = {
 };
 
 export const SelectSourceView: FC<SelectSourceViewProps> = ({
+  amount,
+  currency,
   onSelectWallet,
   onSelectExchange,
   onSelectDepositAddress,
@@ -33,36 +37,37 @@ export const SelectSourceView: FC<SelectSourceViewProps> = ({
       onSelect: onSelectEmbeddedWallet,
     },
     {
-      description: 'Sign the transaction with your connected Web3 wallet',
+      description: 'MetaMask, Phantom, Coinbase & more',
       icon: Wallet,
       id: 'wallet',
-      label: 'Pay with Wallet',
+      label: 'Wallet',
       onSelect: onSelectWallet,
     },
     {
-      description: 'Complete the payment via your Coinbase account',
+      description: 'Pay from your exchange balance',
       icon: ArrowLeftRight,
       id: 'exchange',
-      label: 'Pay with Exchange',
+      label: 'Exchange',
       onSelect: onSelectExchange,
     },
     {
-      description: 'Pay via deposit address',
+      description: 'Pay via a deposit address',
       icon: ArrowDownToLine,
       id: 'depositAddress',
-      label: 'Pay with Deposit Address',
+      label: 'Deposit Address',
       onSelect: onSelectDepositAddress,
     },
   ];
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-base font-semibold">Choose payment method</h3>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          How would you like to fund this flow?
-        </p>
-      </div>
+    <div className="space-y-5">
+      {amount && currency && (
+        <div className="pb-2 border-b border-border">
+          <p className="text-4xl font-bold tracking-tight">{amount}</p>
+          <p className="text-base font-medium text-[var(--action)] mt-0.5">{currency}</p>
+        </div>
+      )}
+      <h2 className="text-xl font-bold">Pick how you'll pay</h2>
 
       <div className="space-y-2">
         {options.map((option) => {
@@ -71,13 +76,13 @@ export const SelectSourceView: FC<SelectSourceViewProps> = ({
             <button
               key={option.id}
               onClick={option.onSelect}
-              className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-card text-left transition-all duration-150 hover:border-[var(--action)] hover:bg-[var(--action)]/5 group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--action)]/40"
+              className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-[var(--bg-bottom)] text-left transition-all duration-150 hover:border-[var(--action)] hover:bg-[var(--action)]/5 group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--action)]/40"
             >
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-muted flex items-center justify-center transition-colors duration-150 group-hover:bg-[var(--action)]/10">
-                <Icon className="w-5 h-5 text-muted-foreground transition-colors duration-150 group-hover:text-[var(--action)]" />
+              <div className="shrink-0 w-10 h-10 rounded-full bg-[var(--brand-light)] flex items-center justify-center transition-colors duration-150 group-hover:bg-[var(--action)]/10">
+                <Icon className="w-5 h-5 text-[var(--action)] transition-colors duration-150" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{option.label}</p>
+                <p className="text-sm font-semibold">{option.label}</p>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                   {option.description}
                 </p>

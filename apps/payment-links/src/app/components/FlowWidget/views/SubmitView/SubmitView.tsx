@@ -28,9 +28,9 @@ type SubmitViewProps = {
 
 type SigningStep = 'approval' | 'transaction';
 
-const STEP_LABELS: Record<SigningStep, string> = {
-  approval: 'Approve token spend',
-  transaction: 'Sign transaction',
+const STEP_CONFIG: Record<SigningStep, { label: string; description: string }> = {
+  approval: { label: 'Approve token', description: 'Allow spending in your wallet' },
+  transaction: { label: 'Authorize payment', description: 'Confirm in your wallet' },
 };
 
 export const SubmitView: FC<SubmitViewProps> = ({
@@ -110,77 +110,75 @@ export const SubmitView: FC<SubmitViewProps> = ({
 
   return (
     <div className="space-y-5">
-      {!isPending && error && (
-        <div className="flex items-center gap-2">
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-0.5">Payment</p>
+          {!isPending && error ? (
+            <h2 className="text-xl font-bold">Payment failed</h2>
+          ) : (
+            <h2 className="text-xl font-bold">Processing payment</h2>
+          )}
+        </div>
+        {!isPending && error && (
           <button
             onClick={onBack}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors mt-1"
             aria-label="Go back"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <h3 className="text-base font-semibold">Transaction failed</h3>
-        </div>
-      )}
+        )}
+      </div>
 
-      {isPending && (
-        <div>
-          <h3 className="text-base font-semibold">Signing transaction</h3>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Please confirm the prompts in your wallet
-          </p>
-        </div>
-      )}
-
-      <div className="space-y-2">
+      {/* Timeline steps */}
+      <div className="space-y-0">
         {steps.map((step, index) => {
           const isDone =
             currentStepIndex > index ||
             (!isPending && !error && hasStartedRef.current);
           const isActive = currentStep === step && isPending;
-          const isPast = currentStepIndex > index;
+          const isUpcoming = !isDone && !isActive;
+          const isLast = index === steps.length - 1;
 
           return (
-            <div
-              key={step}
-              className={cn(
-                'flex items-center gap-3 rounded-xl border px-4 py-3 transition-all',
-                isActive && 'border-[var(--action)] bg-[var(--brand-light)]',
-                isPast && 'border-border bg-[var(--bg-bottom)] opacity-60',
-                !isActive && !isPast && currentStepIndex < index && 'opacity-40',
-              )}
-            >
-              <div
-                className={cn(
-                  'w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold',
-                  isDone
-                    ? 'bg-[var(--action)] text-white'
-                    : isActive
-                      ? 'border-2 border-[var(--action)]'
-                      : 'border-2 border-border',
-                )}
-              >
-                {isActive ? (
-                  <Spinner className="size-3 text-[var(--action)]" />
-                ) : isDone ? (
-                  '✓'
-                ) : (
-                  index + 1
+            <div key={step} className="flex gap-3">
+              {/* Icon + connector line */}
+              <div className="flex flex-col items-center">
+                <div
+                  className={cn(
+                    'w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold transition-all',
+                    isDone && 'bg-[var(--action)] text-white',
+                    isActive && 'border-2 border-[var(--action)] bg-white',
+                    isUpcoming && 'border-2 border-border bg-white',
+                  )}
+                >
+                  {isActive ? (
+                    <Spinner className="size-3 text-[var(--action)]" />
+                  ) : isDone ? (
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+                      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : null}
+                </div>
+                {!isLast && (
+                  <div className={cn('w-px flex-1 my-1', isDone ? 'bg-[var(--action)]' : 'bg-border')} />
                 )}
               </div>
-              <span className={cn('text-sm', isActive && 'font-medium')}>
-                {STEP_LABELS[step]}
-              </span>
+
+              {/* Label + description */}
+              <div className={cn('pb-4 pt-0.5', isLast && 'pb-0')}>
+                <p className={cn('text-sm font-semibold', isUpcoming && 'text-muted-foreground')}>
+                  {STEP_CONFIG[step].label}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {STEP_CONFIG[step].description}
+                </p>
+              </div>
             </div>
           );
         })}
       </div>
-
-      {isPending && (
-        <p className="text-xs text-center text-muted-foreground animate-pulse">
-          Waiting for wallet confirmation…
-        </p>
-      )}
 
       {error && !isPending && (
         <div className="flex flex-col gap-3">

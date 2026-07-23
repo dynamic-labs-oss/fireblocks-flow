@@ -128,14 +128,12 @@ export const StatusView: FC<StatusViewProps> = ({ flow, onFlowUpdated, onReset }
             Checking status every 3 seconds…
           </p>
         )}
-        <Button
-          variant={header.isFailure ? 'default' : 'outline'}
-          onClick={onReset}
-          className="w-full"
-        >
-          <RotateCcw className="w-4 h-4" />
-          {isDone ? 'Start over' : 'Done'}
-        </Button>
+        {!isDone && (
+          <Button variant="outline" onClick={onReset} className="w-full">
+            <RotateCcw className="w-4 h-4" />
+            Done
+          </Button>
+        )}
       </div>
     </div>
   );

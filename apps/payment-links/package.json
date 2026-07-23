@@ -38,6 +38,7 @@
     "zod": "4.0.5"
   },
   "devDependencies": {
+    "@dynamic-labs-sdk/droplet-mcp": "^1.20.0",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/node": "18.16.9",
     "@types/qrcode": "^1.5.5",

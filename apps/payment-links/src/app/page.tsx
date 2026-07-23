@@ -55,7 +55,7 @@ const PaymentLinkPage: FC = () => {
   return (
     <DynamicClientProvider environmentId={decoded.environmentId}>
       <DeviceRegistrationHandler />
-      <div className="min-h-screen flex items-center justify-center p-6 bg-[#f0f2f5]">
+      <div className="min-h-screen flex justify-center py-10 px-4 bg-[#f0f2f5]">
         <FlowWidget initialFlowId={decoded.flowId} onReset={handleReset} />
       </div>
     </DynamicClientProvider>

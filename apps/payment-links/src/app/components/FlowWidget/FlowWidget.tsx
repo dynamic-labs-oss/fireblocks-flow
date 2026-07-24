@@ -8,7 +8,7 @@ import {
   useUser,
 } from '@dynamic-labs-sdk/react-hooks';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, X } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState } from 'react';
@@ -202,17 +202,6 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
 
   return (
     <div className="w-full max-w-[440px] mx-auto flex flex-col gap-4">
-      {/* Back to product — hidden on the first view */}
-      {view !== 'selectSource' && (
-        <button
-          onClick={handleReset}
-          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors self-start"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to product
-        </button>
-      )}
-
       {/* Card */}
       <div className="bg-white rounded-[20px] overflow-hidden shadow-elevated relative">
         <AnimatePresence mode="wait" initial={false}>

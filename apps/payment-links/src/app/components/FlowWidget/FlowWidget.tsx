@@ -226,8 +226,6 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
             {/* Primary views — handle their own px-5 section padding */}
             {view === 'selectSource' && flow && (
               <SelectSourceView
-                amount={flow.amount}
-                currency={flow.currency}
                 onSelectWallet={() => setView('attachWallet')}
                 onSelectExchange={handleSelectExchange}
                 onSelectDepositAddress={() => setView('depositAddress')}

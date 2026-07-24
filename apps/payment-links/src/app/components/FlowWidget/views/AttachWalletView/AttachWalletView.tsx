@@ -128,36 +128,14 @@ export const AttachWalletView: FC<AttachWalletViewProps> = ({
     );
   }
 
-  // Initial state: wallet provider list
+  // Initial state: wallet provider list (manages its own header + padding)
   return (
-    <div className="px-5 py-5 flex flex-col gap-4">
-      <div className="flex items-start gap-3">
-        <button
-          onClick={pickedWallet ? () => setPickedWallet(null) : onBack}
-          className="w-7 h-7 mt-0.5 -ml-1 shrink-0 flex items-center justify-center rounded-full text-[var(--brand-muted,#99a0ae)] hover:text-[var(--brand-fg,#0e121b)] hover:bg-[var(--brand-row-bg,#f9fafb)] transition-colors cursor-pointer"
-          aria-label="Go back"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-[0.18em] font-medium text-[var(--brand-muted,#99a0ae)]">
-            Connect a wallet
-          </span>
-          <h2 className="text-base font-semibold text-[var(--brand-fg,#0e121b)] tracking-[-0.01em]">
-            Connect your wallet
-          </h2>
-        </div>
-      </div>
-      <WalletProviderList
-        onConnected={(walletAccount) => {
-          if (walletAccount) {
-            setPickedWallet(walletAccount);
-          }
-          setHasConnectedInSession(true);
-        }}
-      />
-    </div>
+    <WalletProviderList
+      onBack={pickedWallet ? () => setPickedWallet(null) : onBack}
+      onConnected={(walletAccount) => {
+        if (walletAccount) setPickedWallet(walletAccount);
+        setHasConnectedInSession(true);
+      }}
+    />
   );
 };

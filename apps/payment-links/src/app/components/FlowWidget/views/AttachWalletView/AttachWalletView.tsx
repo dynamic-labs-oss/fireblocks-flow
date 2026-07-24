@@ -78,35 +78,37 @@ export const AttachWalletView: FC<AttachWalletViewProps> = ({
   };
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center gap-2">
-        <button
-          onClick={
-            forceShowPicker
-              ? () => setForceShowPicker(false)
-              : pickedWallet
-                ? () => setPickedWallet(null)
-                : onBack
-          }
-          className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
-          aria-label="Go back"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <h2 className="text-xl font-bold">{heading}</h2>
-      </div>
+    <div>
+      {/* Header — hidden when ConnectedWalletPanel renders its own */}
+      {!connectedWallet && (
+        <div className="flex items-center gap-3 px-5 py-5 border-b border-border-default">
+          <button
+            onClick={
+              forceShowPicker
+                ? () => setForceShowPicker(false)
+                : pickedWallet
+                  ? () => setPickedWallet(null)
+                  : onBack
+            }
+            className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            aria-label="Go back"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <h2 className="text-base font-semibold tracking-[-0.01em]">{heading}</h2>
+        </div>
+      )}
 
       {hasConnectedInSession && isLoadingWallets ? (
-        <div className="flex flex-col items-center gap-2 py-6">
+        <div className="px-5 py-12 flex flex-col items-center gap-2">
           <Spinner className="size-5 text-[var(--action)]" />
         </div>
       ) : showWalletPicker ? (
-        <>
+        <div className="px-5 py-5 space-y-4">
           <WalletAccountList
             walletAccounts={walletAccounts as WalletAccount[]}
             onSelect={handlePickWallet}
           />
-
           {onLogout && (
             <button
               type="button"
@@ -117,7 +119,7 @@ export const AttachWalletView: FC<AttachWalletViewProps> = ({
               Log out
             </button>
           )}
-        </>
+        </div>
       ) : connectedWallet ? (
         <ConnectedWalletPanel
           flow={flow}
@@ -137,14 +139,16 @@ export const AttachWalletView: FC<AttachWalletViewProps> = ({
           onFlowUpdated={onFlowUpdated}
         />
       ) : (
-        <WalletProviderList
-          onConnected={(walletAccount) => {
-            if (walletAccount) {
-              setPickedWallet(walletAccount);
-            }
-            setHasConnectedInSession(true);
-          }}
-        />
+        <div className="px-5 py-5">
+          <WalletProviderList
+            onConnected={(walletAccount) => {
+              if (walletAccount) {
+                setPickedWallet(walletAccount);
+              }
+              setHasConnectedInSession(true);
+            }}
+          />
+        </div>
       )}
     </div>
   );

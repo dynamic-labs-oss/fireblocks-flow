@@ -214,98 +214,98 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
       )}
 
       {/* Card */}
-      <div className="bg-white rounded-[20px] overflow-hidden shadow-elevated">
-        <div className="p-6 relative">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={view}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.18, ease: 'easeInOut' }}
-            >
-              {view === 'selectSource' && flow && (
-                <SelectSourceView
-                  amount={flow.amount}
-                  currency={flow.currency}
-                  onSelectWallet={() => setView('attachWallet')}
-                  onSelectExchange={handleSelectExchange}
-                  onSelectDepositAddress={() => setView('depositAddress')}
-                  onSelectEmbeddedWallet={() => {
-                    if (user) {
-                      setUsedEmailLogin(true);
-                      setView('attachWallet');
-                    } else {
-                      setView('emailLogin');
-                    }
-                  }}
-                />
-              )}
-
-              {view === 'emailLogin' && flow && (
-                <EmailLoginView
-                  onBack={() => setView('selectSource')}
-                  onLoggedIn={() => {
+      <div className="bg-white rounded-[20px] overflow-hidden shadow-elevated relative">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={view}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: 'easeInOut' }}
+          >
+            {/* Primary views — handle their own px-5 section padding */}
+            {view === 'selectSource' && flow && (
+              <SelectSourceView
+                amount={flow.amount}
+                currency={flow.currency}
+                onSelectWallet={() => setView('attachWallet')}
+                onSelectExchange={handleSelectExchange}
+                onSelectDepositAddress={() => setView('depositAddress')}
+                onSelectEmbeddedWallet={() => {
+                  if (user) {
                     setUsedEmailLogin(true);
                     setView('attachWallet');
-                  }}
-                />
-              )}
-
-              {view === 'attachWallet' && flow && (
-                <AttachWalletView
-                  flow={flow}
-                  initiallyConnected={usedEmailLogin}
-                  onAttached={handleWalletAttached}
-                  onBack={() => setView('selectSource')}
-                  onFlowUpdated={setFlow}
-                  onLogout={
-                    usedEmailLogin
-                      ? () => {
-                          void logout();
-                          setUsedEmailLogin(false);
-                          setView('selectSource');
-                        }
-                      : undefined
+                  } else {
+                    setView('emailLogin');
                   }
-                />
-              )}
+                }}
+              />
+            )}
 
-              {view === 'reviewQuote' && flow && selectedWallet && (
-                <ReviewQuoteView
-                  flow={flow}
-                  fromTokenAddress={selectedFromTokenAddress}
-                  fromChainId={selectedFromChainId}
-                  fromTokenDecimals={selectedFromTokenDecimals}
-                  fromTokenSymbol={selectedFromTokenSymbol}
-                  onBack={() => setView('selectSource')}
-                  walletAccount={selectedWallet}
-                  onConfirm={(updatedFlow, mode) => {
-                    setFlow(updatedFlow);
-                    setSponsorshipMode(mode);
-                    setView('submit');
-                  }}
-                />
-              )}
+            {view === 'emailLogin' && flow && (
+              <EmailLoginView
+                onBack={() => setView('selectSource')}
+                onLoggedIn={() => {
+                  setUsedEmailLogin(true);
+                  setView('attachWallet');
+                }}
+              />
+            )}
 
-              {view === 'submit' && flow && selectedWallet && (
-                <SubmitView
-                  flow={flow}
-                  sponsorshipMode={sponsorshipMode}
-                  walletAccount={selectedWallet}
-                  onBack={() => setView('reviewQuote')}
-                  onRequote={() => {
-                    setFlow((prev) => prev ? { ...prev, quote: undefined } : prev);
-                    setView('reviewQuote');
-                  }}
-                  onSubmitted={(completedFlow) => {
-                    setFlow(completedFlow);
-                    setView('status');
-                  }}
-                />
-              )}
+            {view === 'attachWallet' && flow && (
+              <AttachWalletView
+                flow={flow}
+                initiallyConnected={usedEmailLogin}
+                onAttached={handleWalletAttached}
+                onBack={() => setView('selectSource')}
+                onFlowUpdated={setFlow}
+                onLogout={
+                  usedEmailLogin
+                    ? () => {
+                        void logout();
+                        setUsedEmailLogin(false);
+                        setView('selectSource');
+                      }
+                    : undefined
+                }
+              />
+            )}
 
-              {view === 'depositAddress' && flow && (
+            {view === 'reviewQuote' && flow && selectedWallet && (
+              <ReviewQuoteView
+                flow={flow}
+                fromTokenAddress={selectedFromTokenAddress}
+                fromChainId={selectedFromChainId}
+                fromTokenDecimals={selectedFromTokenDecimals}
+                fromTokenSymbol={selectedFromTokenSymbol}
+                onBack={() => setView('selectSource')}
+                walletAccount={selectedWallet}
+                onConfirm={(updatedFlow, mode) => {
+                  setFlow(updatedFlow);
+                  setSponsorshipMode(mode);
+                  setView('submit');
+                }}
+              />
+            )}
+
+            {view === 'submit' && flow && selectedWallet && (
+              <SubmitView
+                flow={flow}
+                fromTokenSymbol={selectedFromTokenSymbol}
+                sponsorshipMode={sponsorshipMode}
+                walletAccount={selectedWallet}
+                onBack={() => setView('reviewQuote')}
+                onDone={handleReset}
+                onRequote={() => {
+                  setFlow((prev) => prev ? { ...prev, quote: undefined } : prev);
+                  setView('reviewQuote');
+                }}
+              />
+            )}
+
+            {/* Secondary views — wrapped in uniform padding */}
+            {view === 'depositAddress' && flow && (
+              <div className="px-5 py-5">
                 <DepositAddressView
                   flow={flow}
                   onBack={() => setView('selectSource')}
@@ -315,9 +315,11 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
                     setView('status');
                   }}
                 />
-              )}
+              </div>
+            )}
 
-              {view === 'exchange' && flow && (
+            {view === 'exchange' && flow && (
+              <div className="px-5 py-5">
                 <ExchangeView
                   flow={flow}
                   onBack={() => setView('selectSource')}
@@ -326,23 +328,25 @@ export const FlowWidget: FC<FlowWidgetProps> = ({ initialFlowId, onReset }) => {
                     setView('status');
                   }}
                 />
-              )}
-
-              {view === 'status' && flow && (
-                <StatusView flow={flow} onFlowUpdated={setFlow} onReset={handleReset} />
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          {isAttachingExchange && (
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
-              <div className="flex flex-col items-center gap-3">
-                <Spinner className="size-6 text-[var(--action)]" />
-                <p className="text-sm text-muted-foreground">Setting up exchange…</p>
               </div>
+            )}
+
+            {view === 'status' && flow && (
+              <div className="px-5 py-5">
+                <StatusView flow={flow} onFlowUpdated={setFlow} onReset={handleReset} />
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {isAttachingExchange && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+            <div className="flex flex-col items-center gap-3">
+              <Spinner className="size-6 text-[var(--action)]" />
+              <p className="text-sm text-muted-foreground">Setting up exchange…</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
     </div>

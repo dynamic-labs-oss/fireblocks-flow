@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowDownToLine, ArrowLeftRight, KeyRound, Wallet } from 'lucide-react';
+import { ArrowDownToLine, ArrowLeftRight, ChevronRight, KeyRound, Wallet } from 'lucide-react';
 import type { FC } from 'react';
 
 type SelectSourceViewProps = {
@@ -60,38 +60,36 @@ export const SelectSourceView: FC<SelectSourceViewProps> = ({
   ];
 
   return (
-    <div className="space-y-5">
-      {amount && currency && (
-        <div className="pb-2 border-b border-border">
-          <p className="text-4xl font-bold tracking-tight">{amount}</p>
-          <p className="text-base font-medium text-[var(--action)] mt-0.5">{currency}</p>
-        </div>
-      )}
-      <h2 className="text-xl font-bold">Pick how you'll pay</h2>
+    <div>
+      {/* Header */}
+      <div className="px-5 py-5 border-b border-border-default">
+        {amount && currency && (
+          <span className="block text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-medium mb-1">
+            PAYMENT {amount} {currency}
+          </span>
+        )}
+        <h2 className="text-base font-semibold tracking-[-0.01em]">Pick how you'll pay</h2>
+      </div>
 
-      <div className="space-y-2">
+      {/* Source rows */}
+      <div className="px-5 py-4 flex flex-col gap-1.5">
         {options.map((option) => {
           const Icon = option.icon;
           return (
             <button
               key={option.id}
+              type="button"
               onClick={option.onSelect}
-              className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-[var(--bg-bottom)] text-left transition-all duration-150 hover:border-[var(--action)] hover:bg-[var(--action)]/5 group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--action)]/40"
+              className="h-[52px] flex items-center gap-3 bg-bg-bottom hover:bg-bg-accented rounded-lg px-3 w-full transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-action/40"
             >
-              <div className="shrink-0 w-10 h-10 rounded-full bg-[var(--brand-light)] flex items-center justify-center transition-colors duration-150 group-hover:bg-[var(--action)]/10">
-                <Icon className="w-5 h-5 text-[var(--action)] transition-colors duration-150" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold">{option.label}</p>
-                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  {option.description}
-                </p>
-              </div>
-              <div className="shrink-0 text-muted-foreground/40 group-hover:text-[var(--action)] transition-colors duration-150">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
+              <span className="w-8 h-8 rounded-full bg-action/10 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-action" />
+              </span>
+              <span className="flex flex-col items-start min-w-0 flex-1 text-left">
+                <span className="text-sm font-medium text-foreground leading-tight">{option.label}</span>
+                <span className="text-[11px] text-muted-foreground leading-tight">{option.description}</span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
             </button>
           );
         })}

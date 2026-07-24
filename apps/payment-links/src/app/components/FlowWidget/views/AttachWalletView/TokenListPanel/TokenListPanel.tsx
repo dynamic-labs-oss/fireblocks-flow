@@ -103,36 +103,36 @@ export const TokenListPanel: FC<TokenListPanelProps> = ({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-1.5">
       {tokens.map((token) => (
         <button
           key={`${token.address}-${token.symbol}`}
           type="button"
           disabled={isPending}
           onClick={() => onTokenSelect(token)}
-          className="flex w-full items-center justify-between px-4 py-3 rounded-xl bg-[var(--bg-bottom)] border border-transparent hover:border-[var(--border-default)] transition-colors cursor-pointer disabled:opacity-50"
+          className="h-[52px] flex w-full items-center gap-3 px-3 rounded-lg bg-bg-bottom hover:bg-bg-accented transition-colors cursor-pointer disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-action/40"
         >
-          <div className="flex items-center gap-3">
-            {token.logoURI ? (
-              <img
-                src={token.logoURI}
-                alt={token.symbol}
-                className="w-10 h-10 rounded-full shrink-0"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground shrink-0">
-                {token.symbol.slice(0, 2)}
-              </div>
-            )}
-            <div className="flex flex-col items-start">
-              <span className="text-sm font-semibold">{token.name}</span>
-              <span className="text-xs text-muted-foreground">
-                {token.balance} {token.symbol}
+          {token.logoURI ? (
+            <img
+              src={token.logoURI}
+              alt={token.symbol}
+              className="w-8 h-8 rounded-full shrink-0"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-action/10 flex items-center justify-center shrink-0">
+              <span className="text-[10px] font-bold text-action">
+                {token.symbol.slice(0, 2).toUpperCase()}
               </span>
             </div>
+          )}
+          <div className="flex flex-col items-start min-w-0 flex-1">
+            <span className="text-sm font-medium text-foreground leading-tight">{token.name}</span>
+            <span className="text-[11px] text-muted-foreground leading-tight">
+              {token.balance} {token.symbol}
+            </span>
           </div>
           {token.marketValue !== undefined && (
-            <span className="text-base font-bold shrink-0">
+            <span className="text-sm font-medium shrink-0">
               ${token.marketValue.toFixed(2)}
             </span>
           )}

@@ -143,44 +143,46 @@ export const ConnectedWalletPanel: FC<ConnectedWalletPanelProps> = ({
   const isBusy = isAttaching || isQuoting;
 
   return (
-    <div className="space-y-4">
+    <div>
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-0.5">
-            Payment {flow.amount} {flow.currency}
-          </p>
-          <h2 className="text-xl font-bold">Pick a token</h2>
+      <div className="flex items-start justify-between gap-3 px-5 py-5 border-b border-border-default">
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-medium">
+            PAYMENT {flow.amount} {flow.currency}
+          </span>
+          <h2 className="text-base font-semibold tracking-[-0.01em]">Pick a token</h2>
         </div>
         <button
           onClick={onChangeWallet}
           disabled={isBusy}
-          className="flex items-center gap-1.5 mt-1.5 px-3 py-1.5 rounded-full border border-border text-xs font-mono text-foreground hover:border-[var(--action)] transition-colors disabled:opacity-50 shrink-0"
+          className="flex items-center gap-1.5 mt-1 px-3 py-1.5 rounded-full border border-border-default text-xs font-mono text-foreground hover:border-[var(--action)] transition-colors disabled:opacity-50 shrink-0"
         >
           {truncateAddress(walletAccount.address)}
           <X className="w-3 h-3" />
         </button>
       </div>
 
-      {/* Block token selection until attachFlowSource completes */}
+      {/* Token list — block until source is ready */}
       {isAttaching || !isSourceReady ? (
-        <div className="flex flex-col items-center gap-2 py-8">
+        <div className="px-5 py-12 flex flex-col items-center gap-2">
           <Spinner className="size-5 text-[var(--action)]" />
           <p className="text-xs text-muted-foreground">Preparing source…</p>
         </div>
       ) : isQuoting ? (
-        <div className="flex flex-col items-center gap-2 py-8">
+        <div className="px-5 py-12 flex flex-col items-center gap-2">
           <Spinner className="size-5 text-[var(--action)]" />
           <p className="text-xs text-muted-foreground">Fetching quote…</p>
         </div>
       ) : (
-        <TokenListPanel
-          walletAccount={walletAccount}
-          onTokenSelect={(token) => void handleTokenSelect(token)}
-          onManualAddressSubmit={(address) => void handleManualAddressSubmit(address)}
-          onNativeTokenSelect={() => void handleNativeTokenSelect()}
-          isPending={isBusy}
-        />
+        <div className="px-5 py-4">
+          <TokenListPanel
+            walletAccount={walletAccount}
+            onTokenSelect={(token) => void handleTokenSelect(token)}
+            onManualAddressSubmit={(address) => void handleManualAddressSubmit(address)}
+            onNativeTokenSelect={() => void handleNativeTokenSelect()}
+            isPending={isBusy}
+          />
+        </div>
       )}
     </div>
   );

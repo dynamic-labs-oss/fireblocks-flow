@@ -3,6 +3,7 @@ import type { FC } from 'react';
 
 type ProviderButtonProps = {
   ChainIconComponent?: Iconic;
+  connecting?: boolean;
   displayName: string;
   iconSrc?: string;
   installed?: boolean;
@@ -12,6 +13,7 @@ type ProviderButtonProps = {
 
 export const ProviderButton: FC<ProviderButtonProps> = ({
   ChainIconComponent,
+  connecting,
   displayName,
   iconSrc,
   installed,
@@ -21,7 +23,8 @@ export const ProviderButton: FC<ProviderButtonProps> = ({
   <button
     type="button"
     onClick={onClick}
-    className="flex items-center justify-between gap-3 rounded-xl bg-[var(--brand-row-bg,#f9fafb)] px-4 py-3 text-sm font-medium text-[var(--brand-fg,#0e121b)] hover:bg-[var(--brand-row-hover,#f4f5f7)] transition-colors cursor-pointer [&_*]:pointer-events-none"
+    disabled={connecting}
+    className="flex items-center justify-between gap-3 rounded-xl bg-[var(--brand-row-bg,#f9fafb)] px-4 py-3 text-sm font-medium text-[var(--brand-fg,#0e121b)] hover:bg-[var(--brand-row-hover,#f4f5f7)] disabled:opacity-50 transition-colors cursor-pointer [&_*]:pointer-events-none"
   >
     <span className="flex items-center gap-3">
       {walletConnectIcon ? (
@@ -43,10 +46,10 @@ export const ProviderButton: FC<ProviderButtonProps> = ({
       )}
       <span className="text-[15px]">{displayName}</span>
     </span>
-    {installed && (
+    {(connecting || installed) && (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-surface,#ffffff)] border border-[var(--brand-border,#e1e4ea)] px-2.5 py-1 text-[11px] font-medium text-[var(--brand-muted,#99a0ae)] shrink-0">
         <span aria-hidden className="size-1.5 rounded-full bg-[var(--brand-primary,#4779ff)]" />
-        Installed
+        {connecting ? 'Connecting…' : 'Installed'}
       </span>
     )}
   </button>

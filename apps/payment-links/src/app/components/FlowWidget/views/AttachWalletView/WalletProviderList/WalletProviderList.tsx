@@ -7,7 +7,6 @@ import type {
   WalletProviderData,
 } from '@dynamic-labs-sdk/client';
 import { connectWithWalletProvider, getWalletConnectCatalog } from '@dynamic-labs-sdk/client';
-import { Spinner } from '@dynamic-labs-sdk/droplet';
 import { useGetAvailableWalletProvidersData } from '@dynamic-labs-sdk/react-hooks';
 import type { FC } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -179,19 +178,6 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected, o
       </div>
     </div>
   );
-
-  // ── Loading (connecting) overlay ────────────────────────────────────────
-  if (connecting) {
-    return (
-      <div className="px-5 py-5 flex flex-col gap-4">
-        {defaultHeader}
-        <div className="flex flex-col items-center gap-2 py-6">
-          <Spinner className="size-5 text-[var(--action)]" />
-          <p className="text-xs text-[var(--brand-muted,#99a0ae)]">Connecting wallet…</p>
-        </div>
-      </div>
-    );
-  }
 
   // ── Chain selection view ────────────────────────────────────────────────
   if (expandedGroup) {
@@ -376,15 +362,19 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected, o
       {defaultHeader}
 
       <div className="flex flex-col gap-2">
-        {sortedGroups.map(([groupKey, ps]) => (
-          <ProviderButton
-            key={groupKey}
-            displayName={ps[0]!.metadata.displayName}
-            iconSrc={ps[0]!.metadata.icon}
-            installed
-            onClick={() => void handleGroupClick(groupKey)}
-          />
-        ))}
+        {sortedGroups.map(([groupKey, ps]) => {
+          const isConnecting = ps.some(p => p.key === connecting);
+          return (
+            <ProviderButton
+              key={groupKey}
+              displayName={ps[0]!.metadata.displayName}
+              iconSrc={ps[0]!.metadata.icon}
+              installed={!isConnecting}
+              connecting={isConnecting}
+              onClick={() => void handleGroupClick(groupKey)}
+            />
+          );
+        })}
 
         {sortedGroups.length === 0 && (
           <p className="text-sm text-[var(--brand-muted,#99a0ae)] text-center py-4">

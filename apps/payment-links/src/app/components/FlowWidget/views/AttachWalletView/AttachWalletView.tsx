@@ -4,7 +4,7 @@ import type { WalletAccount } from '@dynamic-labs-sdk/client';
 import { isWaasWalletAccount } from '@dynamic-labs-sdk/client/waas';
 import { Spinner } from '@dynamic-labs-sdk/droplet';
 import { useGetWalletAccounts } from '@dynamic-labs-sdk/react-hooks';
-import { ChevronLeft, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 
@@ -81,7 +81,7 @@ export const AttachWalletView: FC<AttachWalletViewProps> = ({
     <div>
       {/* Header — hidden when ConnectedWalletPanel renders its own */}
       {!connectedWallet && (
-        <div className="flex items-center gap-3 px-5 py-5 border-b border-border-default">
+        <div className="flex items-center gap-2 px-5 py-5">
           <button
             onClick={
               forceShowPicker
@@ -90,12 +90,14 @@ export const AttachWalletView: FC<AttachWalletViewProps> = ({
                   ? () => setPickedWallet(null)
                   : onBack
             }
-            className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            className="w-7 h-7 -ml-1 shrink-0 flex items-center justify-center rounded-full text-[var(--brand-muted,#99a0ae)] hover:text-[var(--brand-fg,#0e121b)] hover:bg-[var(--brand-row-bg,#f6f8fa)] transition-colors cursor-pointer"
             aria-label="Go back"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
-          <h2 className="text-base font-semibold tracking-[-0.01em]">{heading}</h2>
+          <h2 className="text-base font-semibold text-[var(--brand-fg,#0e121b)] tracking-[-0.01em]">{heading}</h2>
         </div>
       )}
 

@@ -63,11 +63,11 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
 
   if (expandedGroup) {
     return (
-      <div className="space-y-2">
+      <div className="flex flex-col gap-1.5">
         <button
           type="button"
           onClick={() => setExpandedGroup(null)}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+          className="text-xs text-[var(--brand-muted,#99a0ae)] hover:text-[var(--brand-fg,#0e121b)] transition-colors flex items-center gap-1 mb-1"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           Back to all wallets
@@ -85,7 +85,7 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
   }
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-1.5">
       {Object.entries(groups)
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([groupKey, ps]) => (
@@ -93,6 +93,7 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
             key={groupKey}
             displayName={ps[0].metadata.displayName}
             iconSrc={ps[0].metadata.icon}
+            installed
             onClick={() => void handleGroupClick(groupKey)}
           />
         ))}

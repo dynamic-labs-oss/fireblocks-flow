@@ -30,6 +30,8 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
   }
 
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const VISIBLE_COUNT = 3;
 
   const handleGroupClick = async (groupKey: string) => {
     const group = groups[groupKey];
@@ -84,25 +86,41 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
     );
   }
 
+  const sortedGroups = Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+  const visibleGroups = showAll ? sortedGroups : sortedGroups.slice(0, VISIBLE_COUNT);
+  // WalletConnect counts as a slot; hide it if we haven't revealed "all" yet and groups fill the limit
+  const showWalletConnect = showAll || sortedGroups.length < VISIBLE_COUNT;
+  const hasMore = !showAll && (sortedGroups.length >= VISIBLE_COUNT);
+
   return (
     <div className="flex flex-col gap-1.5">
-      {Object.entries(groups)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([groupKey, ps]) => (
-          <ProviderButton
-            key={groupKey}
-            displayName={ps[0].metadata.displayName}
-            iconSrc={ps[0].metadata.icon}
-            installed
-            onClick={() => void handleGroupClick(groupKey)}
-          />
-        ))}
+      {visibleGroups.map(([groupKey, ps]) => (
+        <ProviderButton
+          key={groupKey}
+          displayName={ps[0].metadata.displayName}
+          iconSrc={ps[0].metadata.icon}
+          installed
+          onClick={() => void handleGroupClick(groupKey)}
+        />
+      ))}
 
-      <ProviderButton
-        displayName="WalletConnect"
-        onClick={() => setWcOpen(true)}
-        walletConnectIcon
-      />
+      {showWalletConnect && (
+        <ProviderButton
+          displayName="WalletConnect"
+          onClick={() => setWcOpen(true)}
+          walletConnectIcon
+        />
+      )}
+
+      {hasMore && (
+        <button
+          type="button"
+          onClick={() => setShowAll(true)}
+          className="text-xs text-[var(--brand-muted,#99a0ae)] hover:text-[var(--brand-fg,#0e121b)] transition-colors py-2 text-center w-full"
+        >
+          Show more wallets
+        </button>
+      )}
 
       <WalletConnectDialog
         open={wcOpen}
@@ -111,7 +129,7 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
       />
 
       {providers.length === 0 && (
-        <p className="text-xs text-muted-foreground text-center py-4">
+        <p className="text-xs text-[var(--brand-muted,#99a0ae)] text-center py-4">
           No wallet extensions detected.
         </p>
       )}

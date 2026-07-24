@@ -27,28 +27,36 @@ type WalletConnectDialogProps = {
   onConnected: (walletAccount: WalletAccount | null) => void;
   onOpenChange: (open: boolean) => void;
   open: boolean;
+  /** Pre-select a chain, skipping the chain-picker step. */
+  initialChain?: WalletConnectChain | null;
 };
 
 export const WalletConnectDialog: FC<WalletConnectDialogProps> = ({
   open,
   onOpenChange,
   onConnected,
+  initialChain,
 }) => {
-  const [chain, setChain] = useState<WalletConnectChain | null>(null);
+  const [chain, setChain] = useState<WalletConnectChain | null>(initialChain ?? null);
   const [, setUri] = useState<string | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const reset = useCallback(() => {
-    setChain(null);
+    setChain(initialChain ?? null);
     setUri(null);
     setQrDataUrl(null);
     setError(null);
-  }, []);
+  }, [initialChain]);
 
   useEffect(() => {
     if (!open) reset();
   }, [open, reset]);
+
+  // Sync when a different initialChain is passed while the dialog is open
+  useEffect(() => {
+    if (open && initialChain) setChain(initialChain);
+  }, [initialChain, open]);
 
   const attemptConnection = useCallback(async () => {
     if (!chain) return;

@@ -1,6 +1,7 @@
 'use client';
 
 import type { OTPVerification } from '@dynamic-labs-sdk/client';
+import { getCaptchaSettings } from '@dynamic-labs-sdk/client';
 import {
   createWaasWalletAccounts,
   getChainsMissingWaasWalletAccounts,
@@ -14,6 +15,8 @@ import { ArrowRight, ChevronLeft } from 'lucide-react';
 import type { FC, FormEvent } from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+
+import { CaptchaWidget } from './CaptchaWidget';
 
 type EmailLoginViewProps = {
   onBack: () => void;
@@ -29,6 +32,8 @@ export const EmailLoginView: FC<EmailLoginViewProps> = ({
   const [isCreatingWallets, setIsCreatingWallets] = useState(false);
   const [otpVerification, setOtpVerification] =
     useState<OTPVerification | null>(null);
+  const [captchaSolved, setCaptchaSolved] = useState(false);
+  const captchaRequired = !!getCaptchaSettings();
 
   const createWalletsAndProceed = async () => {
     setIsCreatingWallets(true);
@@ -105,36 +110,34 @@ export const EmailLoginView: FC<EmailLoginViewProps> = ({
 
   if (isCreatingWallets) {
     return (
-      <div className="flex flex-col items-center gap-3 py-6">
+      <div className="px-5 py-12 flex flex-col items-center gap-3">
         <Spinner className="size-6 text-[var(--action)]" />
-        <p className="text-sm text-muted-foreground">
-          Creating your wallets…
-        </p>
+        <p className="text-sm text-muted-foreground">Creating your wallets…</p>
       </div>
     );
   }
 
   if (otpVerification) {
     return (
-      <div className="space-y-5">
-        <div className="flex items-center gap-2">
+      <div>
+        <div className="flex items-center gap-3 px-5 py-5 border-b border-border-default">
           <button
             onClick={() => setOtpVerification(null)}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
             aria-label="Go back"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <div>
-            <h3 className="text-base font-semibold">Enter verification code</h3>
-            <p className="text-sm text-muted-foreground mt-0.5">
+          <div className="flex flex-col gap-0.5">
+            <h3 className="text-base font-semibold tracking-[-0.01em]">Enter verification code</h3>
+            <p className="text-xs text-muted-foreground">
               We sent a code to{' '}
               <span className="font-medium text-foreground">{email}</span>
             </p>
           </div>
         </div>
 
-        <form onSubmit={handleVerifyOtp} className="space-y-3">
+        <form onSubmit={handleVerifyOtp} className="px-5 py-5 space-y-3">
           <Input
             placeholder="Enter code"
             value={otpCode}
@@ -149,11 +152,7 @@ export const EmailLoginView: FC<EmailLoginViewProps> = ({
             size="lg"
             disabled={!otpCode.trim() || isVerifying}
           >
-            {isVerifying ? (
-              <Spinner className="size-4" />
-            ) : (
-              <ArrowRight className="w-4 h-4" />
-            )}
+            {isVerifying ? <Spinner className="size-4" /> : <ArrowRight className="w-4 h-4" />}
             {isVerifying ? 'Verifying…' : 'Verify'}
           </Button>
         </form>
@@ -162,24 +161,22 @@ export const EmailLoginView: FC<EmailLoginViewProps> = ({
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center gap-2">
+    <div>
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-border-default">
         <button
           onClick={onBack}
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
           aria-label="Go back"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <div>
-          <h3 className="text-base font-semibold">Log in with email</h3>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Enter your email to use an embedded wallet
-          </p>
+        <div className="flex flex-col gap-0.5">
+          <h3 className="text-base font-semibold tracking-[-0.01em]">Log in with email</h3>
+          <p className="text-xs text-muted-foreground">Enter your email to use an embedded wallet</p>
         </div>
       </div>
 
-      <form onSubmit={handleSendOtp} className="space-y-3">
+      <form onSubmit={handleSendOtp} className="px-5 py-5 space-y-3">
         <div className="space-y-1.5">
           <label className="text-sm font-medium" htmlFor="email">
             Email address
@@ -194,17 +191,16 @@ export const EmailLoginView: FC<EmailLoginViewProps> = ({
             autoFocus
           />
         </div>
+        {captchaRequired && (
+          <CaptchaWidget onSolved={() => setCaptchaSolved(true)} />
+        )}
         <Button
           type="submit"
           className="w-full"
           size="lg"
-          disabled={!email.trim() || isSending}
+          disabled={!email.trim() || isSending || (captchaRequired && !captchaSolved)}
         >
-          {isSending ? (
-            <Spinner className="size-4" />
-          ) : (
-            <ArrowRight className="w-4 h-4" />
-          )}
+          {isSending ? <Spinner className="size-4" /> : <ArrowRight className="w-4 h-4" />}
           {isSending ? 'Sending code…' : 'Continue'}
         </Button>
       </form>

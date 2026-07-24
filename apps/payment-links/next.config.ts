@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // utf-8-validate and bufferutil are native Node addons pulled in by
+  // WalletConnect — webpack can't bundle them, so exclude from the bundle.
+  serverExternalPackages: ['utf-8-validate', 'bufferutil'],
   transpilePackages: [
     '@dynamic-labs-sdk/bitcoin',
     '@dynamic-labs-sdk/client',

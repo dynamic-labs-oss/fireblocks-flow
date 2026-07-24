@@ -1,7 +1,6 @@
 'use client';
 
-import { ArrowDownToLine, ArrowLeftRight, KeyRound, Wallet } from 'lucide-react';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 
 type SelectSourceViewProps = {
   onSelectDepositAddress: () => void;
@@ -10,13 +9,36 @@ type SelectSourceViewProps = {
   onSelectWallet: () => void;
 };
 
-type SourceOption = {
-  description: string;
-  icon: FC<{ className?: string }>;
-  id: 'wallet' | 'exchange' | 'embedded' | 'depositAddress';
+function CategoryRow({
+  icon,
+  label,
+  sublabel,
+  onClick,
+}: {
+  icon: ReactNode;
   label: string;
-  onSelect: () => void;
-};
+  sublabel: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full h-[52px] flex items-center gap-3 bg-[var(--brand-row-bg,#f6f8fa)] hover:bg-[var(--brand-row-hover,#eef0f3)] active:opacity-80 rounded-[var(--brand-radius,12px)] px-3 transition-all duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-action/40"
+    >
+      <span className="w-8 h-8 shrink-0 rounded-full bg-[var(--brand-accent,#4779ff)]/10 flex items-center justify-center text-[var(--brand-accent,#4779ff)]">
+        {icon}
+      </span>
+      <span className="flex flex-col items-start min-w-0 flex-1">
+        <span className="text-sm font-medium text-[var(--brand-fg,#0e121b)] leading-tight">{label}</span>
+        <span className="text-[11px] text-[var(--brand-muted,#99a0ae)] leading-tight">{sublabel}</span>
+      </span>
+      <svg className="w-4 h-4 shrink-0 text-[var(--brand-muted,#99a0ae)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  );
+}
 
 export const SelectSourceView: FC<SelectSourceViewProps> = ({
   onSelectWallet,
@@ -24,72 +46,54 @@ export const SelectSourceView: FC<SelectSourceViewProps> = ({
   onSelectDepositAddress,
   onSelectEmbeddedWallet,
 }) => {
-  const options: SourceOption[] = [
-    {
-      description: 'Use an embedded wallet to pay',
-      icon: KeyRound,
-      id: 'embedded',
-      label: 'Embedded Wallet',
-      onSelect: onSelectEmbeddedWallet,
-    },
-    {
-      description: 'Sign the transaction with your connected Web3 wallet',
-      icon: Wallet,
-      id: 'wallet',
-      label: 'Pay with Wallet',
-      onSelect: onSelectWallet,
-    },
-    {
-      description: 'Complete the payment via your Coinbase account',
-      icon: ArrowLeftRight,
-      id: 'exchange',
-      label: 'Pay with Exchange',
-      onSelect: onSelectExchange,
-    },
-    {
-      description: 'Pay via deposit address',
-      icon: ArrowDownToLine,
-      id: 'depositAddress',
-      label: 'Pay with Deposit Address',
-      onSelect: onSelectDepositAddress,
-    },
-  ];
-
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-base font-semibold">Choose payment method</h3>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          How would you like to fund this flow?
-        </p>
-      </div>
+    <div className="px-5 py-5 flex flex-col gap-4">
+      <h2 className="text-base font-semibold text-[var(--brand-fg,#0e121b)] tracking-[-0.01em]">
+        Pick how you'll pay
+      </h2>
 
-      <div className="space-y-2">
-        {options.map((option) => {
-          const Icon = option.icon;
-          return (
-            <button
-              key={option.id}
-              onClick={option.onSelect}
-              className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-card text-left transition-all duration-150 hover:border-[var(--action)] hover:bg-[var(--action)]/5 group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--action)]/40"
-            >
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-muted flex items-center justify-center transition-colors duration-150 group-hover:bg-[var(--action)]/10">
-                <Icon className="w-5 h-5 text-muted-foreground transition-colors duration-150 group-hover:text-[var(--action)]" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{option.label}</p>
-                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  {option.description}
-                </p>
-              </div>
-              <div className="shrink-0 text-muted-foreground/40 group-hover:text-[var(--action)] transition-colors duration-150">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-            </button>
-          );
-        })}
+      <div className="flex flex-col gap-1.5">
+        <CategoryRow
+          onClick={onSelectEmbeddedWallet}
+          label="Embedded Wallet"
+          sublabel="Use an embedded wallet to pay"
+          icon={
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+            </svg>
+          }
+        />
+        <CategoryRow
+          onClick={onSelectWallet}
+          label="Wallet"
+          sublabel="MetaMask, Phantom, Coinbase & more"
+          icon={
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+            </svg>
+          }
+        />
+        <CategoryRow
+          onClick={onSelectExchange}
+          label="Exchange"
+          sublabel="Pay from your exchange balance"
+          icon={
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+            </svg>
+          }
+        />
+        <CategoryRow
+          onClick={onSelectDepositAddress}
+          label="Deposit address"
+          sublabel="Send from anywhere - no connection needed"
+          icon={
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.008v.008H6.75V6.75zM6.75 16.5h.008v.008H6.75V16.5zM16.5 6.75h.008v.008H16.5V6.75zM13.5 13.5h.008v.008H13.5V13.5zM13.5 19.5h.008v.008H13.5v-.008zM19.5 13.5h.008v.008H19.5V13.5zM19.5 19.5h.008v.008H19.5v-.008zM16.5 16.5h.008v.008H16.5V16.5z" />
+            </svg>
+          }
+        />
       </div>
     </div>
   );

@@ -8,7 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@dynamic-labs/iconic": "4.88.6",
     "@dynamic-labs-sdk/bitcoin": "1.19.1",
     "@dynamic-labs-sdk/client": "1.19.1",
     "@dynamic-labs-sdk/droplet": "1.19.1",
@@ -18,7 +17,10 @@
     "@dynamic-labs-sdk/sui": "1.19.1",
     "@dynamic-labs-sdk/tron": "1.19.1",
     "@dynamic-labs-sdk/wallet-connect": "1.19.1",
+    "@dynamic-labs/iconic": "4.88.6",
+    "@hcaptcha/react-hcaptcha": "^2.0.2",
     "@hookform/resolvers": "^5.1.1",
+    "@marsidev/react-turnstile": "^1.5.3",
     "@radix-ui/react-dialog": "1.1.15",
     "@radix-ui/react-label": "2.1.8",
     "@radix-ui/react-slot": "1.2.3",
@@ -36,6 +38,7 @@
     "zod": "4.0.5"
   },
   "devDependencies": {
+    "@dynamic-labs-sdk/droplet-mcp": "^1.20.0",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/node": "18.16.9",
     "@types/qrcode": "^1.5.5",

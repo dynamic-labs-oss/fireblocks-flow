@@ -1,6 +1,7 @@
 'use client';
 
 import { getDefaultClient, waitForClientInitialized } from '@dynamic-labs-sdk/client';
+import { Skeleton } from '@dynamic-labs-sdk/droplet';
 import { DynamicProvider } from '@dynamic-labs-sdk/react-hooks';
 import { useQuery } from '@tanstack/react-query';
 import type { FC, ReactNode } from 'react';
@@ -39,10 +40,13 @@ export const DynamicClientProvider: FC<DynamicClientProviderProps> = ({
 
   if (!isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-muted border-t-primary" />
-          <p className="text-sm text-muted-foreground">Initializing SDK…</p>
+      <div className="min-h-screen flex items-center justify-center p-8">
+        <div className="w-full max-w-md space-y-3">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-14 w-full" />
+          <Skeleton className="h-14 w-full" />
+          <Skeleton className="h-14 w-full" />
         </div>
       </div>
     );

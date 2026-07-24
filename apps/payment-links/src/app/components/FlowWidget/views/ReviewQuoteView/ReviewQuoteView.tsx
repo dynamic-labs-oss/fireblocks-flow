@@ -4,7 +4,7 @@ import type { Flow, WalletAccount } from '@dynamic-labs-sdk/client';
 import { getFlowQuote } from '@dynamic-labs-sdk/client';
 import { isWaasWalletAccount } from '@dynamic-labs-sdk/client/waas';
 import { Button, Spinner } from '@dynamic-labs-sdk/droplet';
-import { ChevronLeft, Clock, RefreshCw } from 'lucide-react';
+import { ArrowRight, Clock, RefreshCw, X } from 'lucide-react';
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -24,6 +24,38 @@ type ReviewQuoteViewProps = {
   onConfirm: (updatedFlow: Flow, sponsorshipMode: SponsorshipMode) => void;
   walletAccount: WalletAccount;
 };
+
+function TokenCard({
+  symbol,
+  amount,
+  gradient,
+}: {
+  amount: string;
+  gradient: 'to-r' | 'to-l';
+  symbol: string;
+}) {
+  return (
+    <div
+      className={
+        gradient === 'to-r'
+          ? 'flex-1 p-3 rounded-lg bg-gradient-to-r from-[var(--brand-card-gradient-start)] to-[var(--brand-card-gradient-end)]'
+          : 'flex-1 p-3 rounded-lg bg-gradient-to-l from-[var(--brand-card-gradient-start)] to-[var(--brand-card-gradient-end)]'
+      }
+    >
+      <div className="flex flex-col items-center gap-1.5">
+        <div className="w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center">
+          <span className="text-[9px] font-bold text-action leading-none">
+            {symbol.slice(0, 4).toUpperCase()}
+          </span>
+        </div>
+        <div className="flex flex-col items-center text-center">
+          <span className="text-[10px] text-muted-foreground tracking-[-0.12px] uppercase">{symbol}</span>
+          <span className="text-sm font-medium text-foreground tracking-[-0.14px] font-mono">{amount}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const ReviewQuoteView: FC<ReviewQuoteViewProps> = ({
   flow,
@@ -55,15 +87,11 @@ export const ReviewQuoteView: FC<ReviewQuoteViewProps> = ({
     }
   }, [flow.id, fromChainId, fromTokenAddress]);
 
-  // hasFetchedRef prevents React StrictMode's double-invoke from calling the
-  // API twice, while still allowing a fresh fetch on genuine re-entry (new
-  // component instance = new ref initialised to false).
   const hasFetchedRef = useRef(false);
 
   useEffect(() => {
     if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
-    // Flow already has a pre-fetched quote from AttachWalletView — use it directly
     if (flow.quote) {
       setQuotedFlow(flow);
       return;
@@ -74,113 +102,139 @@ export const ReviewQuoteView: FC<ReviewQuoteViewProps> = ({
   const displayFlow = quotedFlow ?? flow;
   const quote = displayFlow.quote;
 
+  const fromAmount = quote
+    ? formatQuoteAmount({ decimals: fromTokenDecimals, raw: quote.fromAmount })
+    : '—';
+  const toAmount = formatQuoteAmount({ raw: displayFlow.amount });
+
   return (
-    <div className="space-y-5">
-      <div className="flex items-center gap-2">
+    <div>
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3 px-5 py-5 border-b border-border-default">
+        <div className="flex flex-col gap-1 min-w-0">
+          <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-medium">
+            PAYMENT
+          </span>
+          <h2 className="text-base font-semibold tracking-[-0.01em]">Review your payment</h2>
+          {fromTokenSymbol && (
+            <p className="text-xs text-muted-foreground tracking-[-0.12px] leading-snug">
+              You're paying {displayFlow.amount} {displayFlow.currency} with {fromTokenSymbol}.
+            </p>
+          )}
+        </div>
         <button
           onClick={onBack}
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="shrink-0 p-1 hover:bg-bg-accented rounded transition-colors cursor-pointer mt-0.5"
           aria-label="Go back"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <X className="w-4 h-4 text-muted-foreground" />
         </button>
-        <div>
-          <h3 className="text-base font-semibold">Review quote</h3>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Confirm the details before signing
-          </p>
-        </div>
       </div>
 
       {isPending ? (
-        <div className="flex flex-col items-center gap-3 py-8">
+        <div className="px-5 py-12 flex flex-col items-center gap-3">
           <Spinner className="size-6 text-[var(--action)]" />
           <p className="text-sm text-muted-foreground">Fetching quote…</p>
         </div>
       ) : quote ? (
-        <div className="space-y-3">
-          <div className="rounded-xl border border-border bg-[var(--bg-bottom)] divide-y divide-border">
-            <div className="flex items-center justify-between px-4 py-3">
-              <span className="text-sm text-muted-foreground">You send</span>
-              <span className="text-sm font-semibold font-mono">
-                {formatQuoteAmount({ decimals: fromTokenDecimals, raw: quote.fromAmount })}
-                {fromTokenSymbol && ` ${fromTokenSymbol}`}
-              </span>
+        <>
+          {/* Token conversion card */}
+          <div className="px-5 py-3 border-b border-border-default">
+            <div className="flex items-center gap-3">
+              <TokenCard
+                symbol={fromTokenSymbol ?? '?'}
+                amount={fromAmount}
+                gradient="to-r"
+              />
+              <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
+              <TokenCard
+                symbol={displayFlow.currency}
+                amount={toAmount}
+                gradient="to-l"
+              />
             </div>
-            <div className="flex items-center justify-between px-4 py-3">
-              <span className="text-sm text-muted-foreground">They receive</span>
-              <span className="text-sm font-semibold font-mono text-[var(--action)]">
-                {formatQuoteAmount({ raw: displayFlow.amount })}{' '}
-                {displayFlow.currency}
-              </span>
+          </div>
+
+          {/* Fee breakdown */}
+          <div className="px-5 py-3 border-b border-border-default space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Item total</span>
+              <span>{displayFlow.amount} {displayFlow.currency}</span>
             </div>
             {quote.fees?.totalFeeUsd && (
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-sm text-muted-foreground">Est. fees</span>
-                <span className="text-sm font-mono">
-                  ${quote.fees.totalFeeUsd}
-                </span>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Fee</span>
+                <span>${quote.fees.totalFeeUsd}</span>
               </div>
             )}
             {quote.estimatedTimeSec && (
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
                   Est. time
                 </span>
-                <span className="text-sm">
-                  {formatSeconds(quote.estimatedTimeSec)}
-                </span>
+                <span>{formatSeconds(quote.estimatedTimeSec)}</span>
               </div>
+            )}
+            <div className="border-t border-dashed border-border-default pt-2 flex justify-between text-sm font-semibold">
+              <span>Total</span>
+              <span className="font-mono">{fromAmount} {fromTokenSymbol}</span>
+            </div>
+          </div>
+
+          {/* Expiry + gas toggle */}
+          <div className="px-5 py-2.5 border-b border-border-default space-y-2">
+            <p className="text-xs text-muted-foreground">
+              Quote expires at {new Date(quote.expiresAt).toLocaleTimeString()}
+              {' · '}
+              <button
+                onClick={() => void doFetchQuote()}
+                disabled={isPending}
+                className="underline hover:text-foreground transition-colors"
+              >
+                Refresh
+              </button>
+            </p>
+            {isEmbedded && (
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={disableSponsorship}
+                  onChange={(e) => setDisableSponsorship(e.target.checked)}
+                  className="rounded border-border-default accent-[var(--action)]"
+                />
+                <span className="text-xs text-muted-foreground">
+                  Disable gas sponsorship (pay gas yourself)
+                </span>
+              </label>
             )}
           </div>
 
-          <p className="text-xs text-muted-foreground text-center">
-            Quote expires at {new Date(quote.expiresAt).toLocaleTimeString()}
-          </p>
-
-          {isEmbedded && (
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={disableSponsorship}
-                onChange={(e) => setDisableSponsorship(e.target.checked)}
-                className="rounded border-border accent-[var(--action)]"
-              />
-              <span className="text-sm text-muted-foreground">
-                Disable gas sponsorship (pay gas yourself)
-              </span>
-            </label>
-          )}
-
-          <div className="flex flex-col gap-2">
+          {/* Footer buttons */}
+          <div className="px-5 py-3 flex gap-2">
             <Button
-              className="w-full"
+              variant="outline"
+              className="flex-1"
+              size="lg"
+              onClick={onBack}
+              disabled={isPending}
+            >
+              Back
+            </Button>
+            <Button
+              className="flex-1"
               size="lg"
               onClick={() => onConfirm(displayFlow, disableSponsorship ? 'off' : 'auto')}
               disabled={isPending}
             >
-              Confirm & Sign
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              size="lg"
-              onClick={() => void doFetchQuote()}
-              disabled={isPending}
-            >
-              <RefreshCw className="w-4 h-4" />
-              Refresh quote
+              Confirm Payment
             </Button>
           </div>
-        </div>
+        </>
       ) : (
-        <div className="text-center py-6 space-y-3">
+        <div className="px-5 py-10 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No quote available</p>
-          <Button
-            variant="outline"
-            onClick={() => void doFetchQuote()}
-          >
+          <Button variant="outline" onClick={() => void doFetchQuote()}>
             <RefreshCw className="w-4 h-4" />
             Try again
           </Button>

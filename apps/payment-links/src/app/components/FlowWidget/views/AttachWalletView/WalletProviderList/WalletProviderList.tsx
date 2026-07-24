@@ -65,11 +65,11 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
 
   if (expandedGroup) {
     return (
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <button
           type="button"
           onClick={() => setExpandedGroup(null)}
-          className="text-xs text-[var(--brand-muted,#99a0ae)] hover:text-[var(--brand-fg,#0e121b)] transition-colors flex items-center gap-1 mb-1"
+          className="inline-flex items-center gap-1.5 self-start cursor-pointer text-[11px] font-medium text-[var(--brand-muted,#99a0ae)] hover:text-[var(--brand-fg,#0e121b)] transition-colors"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           Back to all wallets
@@ -93,7 +93,7 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
   const hasMore = !showAll && (sortedGroups.length >= VISIBLE_COUNT);
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       {visibleGroups.map(([groupKey, ps]) => (
         <ProviderButton
           key={groupKey}
@@ -116,7 +116,7 @@ export const WalletProviderList: FC<WalletProviderListProps> = ({ onConnected })
         <button
           type="button"
           onClick={() => setShowAll(true)}
-          className="text-xs text-[var(--brand-muted,#99a0ae)] hover:text-[var(--brand-fg,#0e121b)] transition-colors py-2 text-center w-full"
+          className="mt-1 self-center cursor-pointer text-[13px] font-medium text-[var(--brand-muted,#99a0ae)] hover:text-[var(--brand-fg,#0e121b)] transition-colors"
         >
           Show more wallets
         </button>
